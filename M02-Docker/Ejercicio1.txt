@@ -1,0 +1,50 @@
+Ejercicio 1
+Dockeriza la aplicación dentro de lemoncode-challenge, la cual está compuesta de 3 partes:
+
+Un front-end con Node.js
+Un backend en .NET que utiliza un MongoDB para almacenar la información.
+El MongoDB donde se almacena la información en una base de.
+Requisitos del ejercicio:
+
+Los tres componentes deben estar en una red llamada lemoncode-challenge.
+El backend debe comunicarse con el mongodb a través de esta URL mongodb://some-mongo:27017
+El front-end debe comunicarse con la api a través de http://topics-api:5000/api/topics
+El front-end debe estar mapeado con el host para ser accesible a través del puerto 8080.
+El MongoDB debe almacenar la información que va generando en un volumen, mapeado a la ruta /data/db.
+Este debe de tener una base de datos llamada TopicstoreDb con una colección llamada Topics. La colección Topics debe tener esta estructura: {"_id":{"$oid":"5fa2ca6abe7a379ec4234883"},"Name":"Contenedores"} ¡Añade varios registros!
+
+
+## Creamos un contenedor que tenga MongoDB 
+## con el nombre some-mongo, 
+## mapeado en el puerto 27017
+## con un volumen mapeado a la ruta /data/db.
+
+## Creamos una network para todos los Contenedores
+docker network create lemoncode-challenge
+
+docker run -d --name some-mongo \
+    -p 27017:27017 \
+    -e MONGO_INITDB_ROOT_USERNAME=mongoadmin \
+    -e MONGO_INITDB_ROOT_PASSWORD=secret \
+    -v /data:/data/db \
+    --network lemoncode-challenge
+    mongo
+
+ docker run -d --name some-mongo -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=mongoadmin -e MONGO_INITDB_ROOT_PASSWORD=secret -v /data:/data/db --network lemoncode-challenge mongo
+
+## Creamos un Dockerfile en la carpeta backend (adjunto)
+## En un terminal en la carpeta backend creamos la imagen de docker
+docker build -t backend -f Dockerfile . 
+
+## Creamos un contenedor con el backend
+## con el nombre topics-api
+## conectado al network
+docker run -d --name topics-api --network lemoncode-challenge backend 
+
+## Creamos un Dockerfile en la carpeta frontend (adjunto)
+## En un terminal en la carpeta frontend creamos la imagen de docker
+docker build -t frontend -f Dockerfile . 
+
+## Creamos un contenedor con el frontend 
+## conectado al network
+docker run -d --name frontend --network lemoncode-challenge frontend
