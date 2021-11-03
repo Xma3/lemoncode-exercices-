@@ -11,7 +11,7 @@ docker-compose.yml file (attached)
 
 Además debes indicar qué comandos utilizarías para:
  - levantar el entorno
-docker-compose up -d 
+docker-compose up --build &
  - pararlo
 docker-compose stop
  - eliminarlo.
