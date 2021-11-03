@@ -1,0 +1,40 @@
+version: "2.0"
+services:
+  some-mongo:
+    image: mongo
+    volumes: 
+      - /data:/data/db
+    ports: 
+      - 27017:27017
+    restart: always
+    environment: 
+      MONGO_INITDB_ROOT_USERNAME: mongoadmin
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    networks: 
+      - lemoncode-challenge
+  topics-api:
+    image: backend
+    depends_on:
+      - some-mongo
+    build:
+      context: ./backend
+    ports: 
+      - 5000:5000
+    restart: always
+    networks: 
+      - lemoncode-challenge
+  frontend:
+    image: frontend 
+    depends_on:
+      - topics-api
+    build:
+      context: ./frontend
+    ports: 
+      - 8080:8080
+    restart: always
+    networks: 
+      - lemoncode-challenge
+volumes:
+  data:
+networks:
+  lemoncode-challenge:
